@@ -39,7 +39,7 @@ const Page = () => {
   }, [user]);
 
   if (!user) { 
-    return <p>Please sign in to access the dashboard.</p>;
+    return <p>Please sign in to access the dashboard. <LogoutButton /></p>;
   }
 
   const handleCreateGroup = async () => {
