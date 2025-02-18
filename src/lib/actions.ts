@@ -1,4 +1,4 @@
-import { addDoc, collection, getDocs } from "firebase/firestore";
+import { addDoc, arrayUnion, collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "./firebase";
 import { Group } from "@/types/types";
 
@@ -35,5 +35,24 @@ export const getPublicGroups = async (): Promise<Group[]> => {
   } catch (error) {
     console.error(error);
     return [];
+  }
+};
+
+export const joinPublicGroup = async (id: string, member: string) => {
+  try {
+    console.log("Joining group:", id, "Member:", member);
+    
+    if (!id || !member) {
+      throw new Error("Invalid group ID or member name");
+    }
+
+    const docRef = doc(db, "groups", id);
+    await updateDoc(docRef, {
+      members: arrayUnion(member),
+    });
+
+    console.log("Successfully joined group");
+  } catch (error) {
+    console.error("Error joining group:", error);
   }
 };

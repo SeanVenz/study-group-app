@@ -7,11 +7,11 @@ export interface FirebaseUser extends User {
 }
 
 export interface Group {
-  id?: string;
+  id?: string; 
   groupName: string;
   groupDescription: string;
   groupPrivacy: string;
   admin: string | null | undefined;
   groupPassword?: string | null;
-  members?: Array;
+  members?: string[];
 }
