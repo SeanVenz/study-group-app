@@ -1,6 +1,6 @@
-import { addDoc, arrayUnion, collection, doc, getDocs, updateDoc } from "firebase/firestore";
+import { addDoc, arrayUnion, collection, doc, getDocs, query, where, updateDoc } from "firebase/firestore";
 import { db } from "./firebase";
-import { Group } from "@/types/types";
+import { Group, PrivateGroup } from "@/types/types";
 
 export const createGroup = async (group: Group) => {
   const { groupName, groupDescription, groupPrivacy, admin, groupPassword } =
@@ -56,3 +56,28 @@ export const joinPublicGroup = async (id: string, member: string) => {
     console.error("Error joining group:", error);
   }
 };
+
+export const joinPrivateGroup = async(privateGroup : PrivateGroup, member: string|null|undefined) => {
+
+  const { groupName, groupPassword } = privateGroup;
+  const groupReference = collection(db, "groups");
+
+  const q = query(
+    groupReference,
+    where("groupName", "==", groupName),
+    where("groupPassword", "==", groupPassword),
+    where("groupPrivacy", "==", "Private")
+  );
+
+  const querySnapshot = await getDocs(q);
+
+  if(querySnapshot.empty){
+    return "No Groups Found";
+  }
+
+  const doc = querySnapshot.docs[0];
+
+  await updateDoc(doc.ref, {
+    members: arrayUnion(member)
+  })
+}

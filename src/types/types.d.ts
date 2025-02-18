@@ -15,3 +15,8 @@ export interface Group {
   groupPassword?: string | null;
   members?: string[];
 }
+
+export interface PrivateGroup {
+  groupName: string;
+  groupPassword: string;
+}

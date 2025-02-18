@@ -4,14 +4,15 @@ import LogoutButton from '@/components/LogoutButton';
 import Modal from '@/components/Modal';
 import useAuth from '@/hooks/useAuth';
 import useGetGroups from '@/hooks/useGetGroups';
-import { createGroup } from '@/lib/actions';
-import { Group } from '@/types/types';
+import { createGroup, joinPrivateGroup } from '@/lib/actions';
+import { Group, PrivateGroup } from '@/types/types';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 const Page = () => {
   const user = useAuth();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isPrivateModalOpen, setIsPrivateModalOpen] = useState<boolean>(false);
   const { groups } = useGetGroups(false);
   const [formData, setFormData] = useState<Group>({
     groupName: '',
@@ -20,6 +21,19 @@ const Page = () => {
     admin: user?.displayName,
     groupPassword: '',
   })
+
+  const [privateFormData, setPrivateFormData] = useState<PrivateGroup>({
+    groupName: '',
+    groupPassword: '',
+  })
+
+  const handlePrivateInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { id, value } = e.target;
+    setPrivateFormData(prevState => ({
+      ...prevState,
+      [id]: value,
+    }));
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { id, value } = e.target;
@@ -49,6 +63,14 @@ const Page = () => {
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
   };
+
+  const togglePrivateModal = () => {
+    setIsPrivateModalOpen(!isPrivateModalOpen);
+  };
+
+  const handleJoinPrivateGroup = async() => {
+    await joinPrivateGroup(privateFormData, user?.displayName);
+  }
 
   return (
     <div>
@@ -90,6 +112,13 @@ const Page = () => {
         Create Group
       </button>
 
+      <button
+        onClick={togglePrivateModal}
+        className="px-4 py-2 bg-blue-500 text-white rounded-md"
+      >
+        Join Private Group
+      </button>
+
       <LogoutButton />
       <Modal isOpen={isModalOpen} onClose={toggleModal}>
         <h2>Create Your Own Study Group!</h2>
@@ -115,6 +144,19 @@ const Page = () => {
           </div>
         ) : (<></>)}
         <button onClick={handleCreateGroup}>Create Group</button>
+      </Modal>
+
+      <Modal isOpen={isPrivateModalOpen} onClose={togglePrivateModal}>
+        <h2>Join Private Group</h2>
+        <div>
+          <label htmlFor="Name">Group Name</label>
+          <input type='text' id='groupName' value={privateFormData.groupName} onChange={handlePrivateInputChange}  />
+        </div>
+        <div>
+          <label htmlFor="Description">Group Password</label>
+          <input type='text' id='groupPassword' value={privateFormData.groupPassword} onChange={handlePrivateInputChange}  />
+        </div>
+        <button onClick={handleJoinPrivateGroup}>Join Group</button>
       </Modal>
     </div>
   );
