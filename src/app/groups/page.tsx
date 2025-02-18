@@ -44,7 +44,7 @@ const GroupsPage = () => {
                   ))}
                 </ul>
               )}
-              <button onClick={() => handleJoinGroup(group.id, user?.displayName)}>
+              <button onClick={() => handleJoinGroup(group.id, user?.uid)}>
                 Join Group
               </button>
             </li>

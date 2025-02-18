@@ -3,19 +3,21 @@ import { db } from "./firebase";
 import { Group, PrivateGroup } from "@/types/types";
 
 export const createGroup = async (group: Group) => {
-  const { groupName, groupDescription, groupPrivacy, admin, groupPassword } =
-    group;
+  const { groupName, groupDescription, groupPrivacy, admin, groupPassword, adminUid } = group;
   try {
-    const group = await addDoc(collection(db, "groups"), {
+    const groupRef = await addDoc(collection(db, "groups"), {
+      adminUid: adminUid,
       groupName,
       groupDescription,
       groupPrivacy,
       admin,
       groupPassword,
     });
-    console.log(group);
+    
+    return { success: true, groupId: groupRef.id };
   } catch (error) {
-    console.log(error);
+    console.error("Error creating group:", error);
+    return { success: false, error };
   }
 };
 

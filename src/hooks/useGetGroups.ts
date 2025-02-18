@@ -14,23 +14,22 @@ function useGetGroups(publicGroup: boolean) {
       const groupsData = await getPublicGroups();
 
       if (publicGroup) {
-        const filteredGroupData = groupsData.filter((group) => 
-          group.admin !== user?.displayName && 
-          !group.members?.includes(user?.displayName ?? '') && 
-          group.groupPrivacy !== 'Private'
+        const filteredGroupData = groupsData.filter((group) =>  
+          !group.members?.includes(user?.uid ?? '') && 
+          group.groupPrivacy !== 'Private' && group.adminUid !== user?.uid
         );
         setGroups(filteredGroupData);
       } else {
         const ownGroup = groupsData.filter((group) => 
-          group.admin === user?.displayName || 
-          group.members?.includes(user?.displayName ?? '') 
+          group.adminUid === user?.uid || 
+          group.members?.includes(user?.uid ?? '') 
         );
         setGroups(ownGroup);
       }
     };
 
     fetchGroups();
-  }, [user?.displayName, publicGroup]);
+  }, [user?.displayName, publicGroup, user?.uid]);
 
   return { groups };
 }

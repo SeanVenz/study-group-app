@@ -15,6 +15,7 @@ const Page = () => {
   const [isPrivateModalOpen, setIsPrivateModalOpen] = useState<boolean>(false);
   const { groups } = useGetGroups(false);
   const [formData, setFormData] = useState<Group>({
+    adminUid: user?.uid,
     groupName: '',
     groupDescription: '',
     groupPrivacy: '',
@@ -48,6 +49,7 @@ const Page = () => {
       setFormData(prevData => ({
         ...prevData,
         admin: user.displayName || null,
+        adminUid: user.uid
       }));
     }
   }, [user]);
@@ -69,13 +71,14 @@ const Page = () => {
   };
 
   const handleJoinPrivateGroup = async() => {
-    await joinPrivateGroup(privateFormData, user?.displayName);
+    await joinPrivateGroup(privateFormData, user?.uid);
   }
 
   return (
     <div>
       <p>Welcome, {user.displayName || "User"}!</p>
       <p>Email: {user.email}</p>
+      <p>ID: {user.uid}</p>
       <Link href='/groups'>View Groups</Link>
 
       <p>My Groups:</p>
